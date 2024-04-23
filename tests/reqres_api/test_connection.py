@@ -3,11 +3,18 @@ import allure
 import logging
 from allure_commons.types import Severity
 
-from tests.settings import REQRES_API_URL_CHECK, REQRES_API_URL_USERS
+from tests.settings import REQRES_API_URL_CHECK, REQRES_API_URL_USERS, TEST_SUCCESS_ATTACHMENTS
 
 
-@allure.severity(Severity.CRITICAL)
+@allure.severity(Severity.BLOCKER)
 def test_connection():
+    """
+    Проверка подключений к API.
+
+    - проверяется возможность подключения;
+    - проверяется подключение с задержкой ответа.
+    """
+
     steps = StepsConnection()
     steps.step1()
     steps.step2()
@@ -15,19 +22,19 @@ def test_connection():
 
 class StepsConnection:
 
-    @allure.step("Проверка статуса подключения")
+    @allure.step("Проверка статуса подключения.")
     def step1(self):
         """Проверка подключения к reqres.in/api/"""
 
-        logging.info("Запуск теста")
         try:
             assert requests.get(url=REQRES_API_URL_CHECK).status_code == 200
-            allure.attach("Проверка подключения к reqres.in/api/ завершена успешно.")
+            if TEST_SUCCESS_ATTACHMENTS:
+                allure.attach("Проверка подключения к reqres.in/api/ завершена успешно.")
         except AssertionError as error:
             logging.error(f"Ошибка при подключении к {REQRES_API_URL_CHECK}:\n{error}")
             raise error
 
-    @allure.step("Задержка подключения")
+    @allure.step("Задержка подключения.")
     def step2(self):
         """Проверка подключения c задержкой."""
 
@@ -36,7 +43,8 @@ class StepsConnection:
         try:
             assert response.status_code == 200
             assert len(response.json()["data"]) > 0
-            allure.attach("Проверка подключения c задержкой завершена успешно.")
+            if TEST_SUCCESS_ATTACHMENTS:
+                allure.attach("Проверка подключения c задержкой завершена успешно.")
         except AssertionError as error:
             logging.error(f"Ошибка при подключении c задержкой к {REQRES_API_URL_USERS}:\n{error}")
             raise error
