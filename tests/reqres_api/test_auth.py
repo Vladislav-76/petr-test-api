@@ -12,13 +12,13 @@ def test_login(correct_user):
 
     steps = StepsAuth()
 
-    steps.step1(correct_user)
+    steps.step1(correct_user["data"])
 
-    incorrect_user = correct_user.copy()
+    incorrect_user = correct_user["data"].copy()
     incorrect_user["email"] = "incorrect_email"
     steps.step2(incorrect_user)
 
-    user_password_out = correct_user.copy()
+    user_password_out = correct_user["data"].copy()
     user_password_out.pop("password", None)
     steps.step3(user_password_out)
 

@@ -16,6 +16,7 @@ def test_connection():
     """
 
     steps = StepsConnection()
+
     steps.step1()
     steps.step2()
 
