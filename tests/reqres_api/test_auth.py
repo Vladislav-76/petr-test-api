@@ -1,9 +1,11 @@
-import requests
-import allure
 import logging
+
+import allure
+import requests
 from allure_commons.types import Severity
 
-from tests.settings import REQRES_API_URL_LOGIN, REQRES_API_URL_LOGOUT, TEST_SUCCESS_ATTACHMENTS
+from tests.settings import (REQRES_API_URL_LOGIN, REQRES_API_URL_LOGOUT,
+                            TEST_SUCCESS_ATTACHMENTS)
 
 
 @allure.severity(Severity.CRITICAL)

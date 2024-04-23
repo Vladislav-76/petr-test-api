@@ -1,8 +1,8 @@
-import requests
 import pytest
+import requests
 
-from tests.settings import REQRES_API_URL_COLORS, REQRES_API_URL_REGISTER, REQRES_API_URL_USERS
-
+from tests.settings import (REQRES_API_URL_COLORS, REQRES_API_URL_REGISTER,
+                            REQRES_API_URL_USERS)
 
 correct_user_data = {
     "email": "eve.holt@reqres.in",
@@ -60,7 +60,7 @@ def correct_color():
     Возвращает словарь с данными корректного цвета.
     """
 
-    # На самом деле API только делает вид, что создает новую запись.
+    # На самом деле API только делает вид, что создает новую запись
     # По возвращаемому от API id ничего не получить
 
     response = requests.post(url=REQRES_API_URL_COLORS, data=correct_color_data)

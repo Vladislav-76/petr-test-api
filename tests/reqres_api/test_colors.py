@@ -1,12 +1,13 @@
-import requests
-import allure
 import logging
 from random import choice
+
+import allure
+import requests
 from allure_commons.types import Severity
 
 from tests.conftest import other_color_data
-from tests.settings import REQRES_API_URL_COLORS, TEST_SUCCESS_ATTACHMENTS
 from tests.reqres_api.utils import is_almost_now
+from tests.settings import REQRES_API_URL_COLORS, TEST_SUCCESS_ATTACHMENTS
 
 
 @allure.severity(Severity.NORMAL)

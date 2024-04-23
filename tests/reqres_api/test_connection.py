@@ -1,9 +1,11 @@
-import requests
-import allure
 import logging
+
+import allure
+import requests
 from allure_commons.types import Severity
 
-from tests.settings import REQRES_API_URL_CHECK, REQRES_API_URL_USERS, TEST_SUCCESS_ATTACHMENTS
+from tests.settings import (REQRES_API_URL_CHECK, REQRES_API_URL_USERS,
+                            TEST_SUCCESS_ATTACHMENTS)
 
 
 @allure.severity(Severity.BLOCKER)
