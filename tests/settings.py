@@ -1,6 +1,7 @@
 BASE_URL = "https://reqres.in/api/"
 REQRES_API_URL_CHECK = f"{BASE_URL}smth/"
 REQRES_API_URL_CHECK = f"{BASE_URL}smth/"
+REQRES_API_URL_COLORS = f"{BASE_URL}colors/"
 REQRES_API_URL_LOGIN = f"{BASE_URL}login/"
 REQRES_API_URL_LOGOUT = f"{BASE_URL}logout/"
 REQRES_API_URL_REGISTER = f"{BASE_URL}register/"
