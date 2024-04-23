@@ -1,10 +1,9 @@
-BASE_URL = "https://reqres.in/api/"
-REQRES_API_URL_CHECK = f"{BASE_URL}smth/"
-REQRES_API_URL_CHECK = f"{BASE_URL}smth/"
-REQRES_API_URL_COLORS = f"{BASE_URL}colors/"
-REQRES_API_URL_LOGIN = f"{BASE_URL}login/"
-REQRES_API_URL_LOGOUT = f"{BASE_URL}logout/"
-REQRES_API_URL_REGISTER = f"{BASE_URL}register/"
-REQRES_API_URL_USERS = f"{BASE_URL}users/"
+BASE_URL: str = "https://reqres.in/api/"
+REQRES_API_URL_CHECK: str = f"{BASE_URL}smth/"
+REQRES_API_URL_COLORS: str = f"{BASE_URL}colors/"
+REQRES_API_URL_LOGIN: str = f"{BASE_URL}login/"
+REQRES_API_URL_LOGOUT: str = f"{BASE_URL}logout/"
+REQRES_API_URL_REGISTER: str = f"{BASE_URL}register/"
+REQRES_API_URL_USERS: str = f"{BASE_URL}users/"
 
-TEST_SUCCESS_ATTACHMENTS = True
+TEST_SUCCESS_ATTACHMENTS: bool = True

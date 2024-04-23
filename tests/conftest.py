@@ -1,10 +1,11 @@
 import pytest
 import requests
+from collections.abc import Generator
 
 from tests.settings import (REQRES_API_URL_COLORS, REQRES_API_URL_REGISTER,
                             REQRES_API_URL_USERS)
 
-correct_user_data = {
+correct_user_data: dict = {
     "email": "eve.holt@reqres.in",
     "password": "pistol",
     "first_name": "Eve",
@@ -12,14 +13,14 @@ correct_user_data = {
     "avatar": "https://reqres.in/img/faces/4-image.jpg",
 }
 
-other_user_data = {
+other_user_data: dict = {
     "email": "michael.lawson@reqres.in",
     "first_name": "Michael",
     "last_name": "Lawson",
     "avatar": "https://reqres.in/img/faces/7-image.jpg",
 }
 
-correct_color_data = {
+correct_color_data: dict = {
     "id": 2,
     "name": "fuchsia rose",
     "year": 2001,
@@ -27,7 +28,7 @@ correct_color_data = {
     "pantone_value": "17-2031",
 }
 
-other_color_data = {
+other_color_data: dict = {
     "id": "4",
     "name": "aqua sky",
     "year": "2003",
@@ -37,7 +38,7 @@ other_color_data = {
 
 
 @pytest.fixture
-def correct_user():
+def correct_user() -> Generator[dict, None, None]:
     """
     Создание сущности пользователя в БД для использования в тесте с последующим удалением.
 
@@ -53,7 +54,7 @@ def correct_user():
 
 
 @pytest.fixture
-def correct_color():
+def correct_color() -> Generator[dict, None, None]:
     """
     Создание сущности цвета в БД для использования в тесте с последующим удалением.
 

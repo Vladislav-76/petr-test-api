@@ -11,21 +11,21 @@ from tests.settings import REQRES_API_URL_COLORS, TEST_SUCCESS_ATTACHMENTS
 
 
 @allure.severity(Severity.NORMAL)
-def test_colors_list():
+def test_colors_list() -> None:
     """Проверка ручки LIST цветов."""
 
     steps = StepsList()
 
     steps.step1()
 
-    params = {"page": 2, "per_page": 6}
+    params: dict = {"page": 2, "per_page": 6}
     steps.step2(params)
 
 
 class StepsList:
 
     @allure.step("Проверка доступности списка цветов.")
-    def step1(self):
+    def step1(self) -> None:
         """Проверка доступности списка цветов."""
 
         try:
@@ -39,7 +39,7 @@ class StepsList:
             raise error
 
     @allure.step("Проверка пагинации.")
-    def step2(self, params):
+    def step2(self, params: dict) -> None:
         """Проверка пагинации списка цветов."""
 
         if requests.get(url=REQRES_API_URL_COLORS).json().get("total", 0) < params["page"] * params["per_page"]:
@@ -58,7 +58,7 @@ class StepsList:
 
 
 @allure.severity(Severity.NORMAL)
-def test_single_color_get(correct_color):
+def test_single_color_get(correct_color: dict) -> None:
     """Проверка получения конкретного цвета."""
 
     color_data = correct_color["data"].copy()
@@ -76,7 +76,7 @@ def test_single_color_get(correct_color):
 
 
 @allure.severity(Severity.NORMAL)
-def test_color_create():
+def test_color_create() -> None:
     """Проверка создания цвета."""
 
     allure.dynamic.parameter("color_data", other_color_data)
@@ -97,7 +97,7 @@ def test_color_create():
 
 
 @allure.severity(Severity.NORMAL)
-def test_user_put(correct_color):
+def test_user_put(correct_color: dict) -> None:
     """Проверка PUT изменения цвета."""
 
     allure.dynamic.parameter("user_data", other_color_data)
@@ -115,7 +115,7 @@ def test_user_put(correct_color):
 
 
 @allure.severity(Severity.NORMAL)
-def test_user_patch(correct_color):
+def test_user_patch(correct_color: dict) -> None:
     """Проверка PATCH изменения цвета."""
 
     allure.dynamic.parameter("user_data", other_color_data)
@@ -134,7 +134,7 @@ def test_user_patch(correct_color):
 
 
 @allure.severity(Severity.NORMAL)
-def test_user_delete(correct_color):
+def test_user_delete(correct_color: dict) -> None:
     """Проверка удаления цвета."""
     try:
         response = requests.delete(url=f"{REQRES_API_URL_COLORS}{correct_color['id']}")

@@ -12,21 +12,21 @@ from tests.settings import (REQRES_API_URL_REGISTER, REQRES_API_URL_USERS,
 
 
 @allure.severity(Severity.NORMAL)
-def test_users_list():
+def test_users_list() -> None:
     """Проверка ручки LIST пользователей."""
 
     steps = StepsList()
 
     steps.step1()
 
-    params = {"page": 2, "per_page": 6}
+    params: dict = {"page": 2, "per_page": 6}
     steps.step2(params)
 
 
 class StepsList:
 
     @allure.step("Проверка доступности списка пользователей.")
-    def step1(self):
+    def step1(self) -> None:
         """Проверка доступности списка пользователей."""
 
         try:
@@ -40,7 +40,7 @@ class StepsList:
             raise error
 
     @allure.step("Проверка пагинации.")
-    def step2(self, params):
+    def step2(self, params: dict) -> None:
         """Проверка пагинации списка пользователей."""
 
         if requests.get(url=REQRES_API_URL_USERS).json().get("total", 0) < params["page"] * params["per_page"]:
@@ -59,7 +59,7 @@ class StepsList:
 
 
 @allure.severity(Severity.NORMAL)
-def test_single_user_get(correct_user):
+def test_single_user_get(correct_user: dict) -> None:
     """Проверка получения конкретного пользователя."""
 
     user_data = correct_user["data"].copy()
@@ -77,18 +77,18 @@ def test_single_user_get(correct_user):
 
 
 @allure.severity(Severity.NORMAL)
-def test_user_register():
+def test_user_register() -> None:
     """Проверка создания пользователя."""
 
     steps = StepsRegister()
 
     steps.step1(correct_user_data)
 
-    user_password_out = correct_user_data.copy()
+    user_password_out: dict = correct_user_data.copy()
     user_password_out.pop("password", None)
     steps.step2(user_password_out)
 
-    user_email_out = correct_user_data.copy()
+    user_email_out: dict = correct_user_data.copy()
     user_email_out.pop("email", None)
     steps.step3(user_email_out)
 
@@ -96,7 +96,7 @@ def test_user_register():
 class StepsRegister:
 
     @allure.step("Проверка создания корректного пользователя.")
-    def step1(self, correct_user_data):
+    def step1(self, correct_user_data: dict) -> None:
         """Проверка создания корректного пользователя."""
 
         try:
@@ -110,7 +110,7 @@ class StepsRegister:
             raise error
 
     @allure.step("Проверка создания пользователя без пароля.")
-    def step2(self, user_password_out):
+    def step2(self, user_password_out: dict) -> None:
         """Проверка создания пользователя без пароля."""
 
         try:
@@ -124,7 +124,7 @@ class StepsRegister:
             raise error
 
     @allure.step("Проверка создания пользователя без почты.")
-    def step3(self, user_email_out):
+    def step3(self, user_email_out: dict) -> None:
         """Проверка создания пользователя без почты."""
 
         try:
@@ -139,7 +139,7 @@ class StepsRegister:
 
 
 @allure.severity(Severity.NORMAL)
-def test_user_put(correct_user):
+def test_user_put(correct_user: dict) -> None:
     """Проверка PUT изменения пользователя."""
 
     allure.dynamic.parameter("user_data", other_user_data)
@@ -157,7 +157,7 @@ def test_user_put(correct_user):
 
 
 @allure.severity(Severity.NORMAL)
-def test_user_patch(correct_user):
+def test_user_patch(correct_user: dict) -> None:
     """Проверка PATCH изменения пользователя."""
 
     allure.dynamic.parameter("user_data", other_user_data)
@@ -176,7 +176,7 @@ def test_user_patch(correct_user):
 
 
 @allure.severity(Severity.NORMAL)
-def test_user_delete(correct_user):
+def test_user_delete(correct_user: dict) -> None:
     """Проверка удаления пользователя."""
     try:
         response = requests.delete(url=f"{REQRES_API_URL_USERS}{correct_user['id']}")

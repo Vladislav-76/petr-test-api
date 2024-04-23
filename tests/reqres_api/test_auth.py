@@ -9,7 +9,7 @@ from tests.settings import (REQRES_API_URL_LOGIN, REQRES_API_URL_LOGOUT,
 
 
 @allure.severity(Severity.CRITICAL)
-def test_login(correct_user):
+def test_login(correct_user: dict) -> None:
     """Проверка ручки login."""
 
     steps = StepsAuth()
@@ -28,7 +28,7 @@ def test_login(correct_user):
 class StepsAuth:
 
     @allure.step("Логин корректного пользователя.")
-    def step1(self, correct_user):
+    def step1(self, correct_user: dict) -> None:
         """Проверка login с корректными данными."""
 
         try:
@@ -42,7 +42,7 @@ class StepsAuth:
             raise error
 
     @allure.step("Логин некорректного пользователя.")
-    def step2(self, incorrect_user):
+    def step2(self, incorrect_user: dict) -> None:
         """Проверка login с некорректными данными."""
 
         try:
@@ -57,7 +57,7 @@ class StepsAuth:
             raise error
 
     @allure.step("Логин без пароля.")
-    def step3(self, user_password_out):
+    def step3(self, user_password_out: dict) -> None:
         """Проверка login без пароля."""
 
         try:
@@ -73,7 +73,7 @@ class StepsAuth:
 
 
 @allure.severity(Severity.NORMAL)
-def test_logout():
+def test_logout() -> None:
     """Проверка ручки logout."""
 
     try:

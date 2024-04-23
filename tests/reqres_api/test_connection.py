@@ -9,7 +9,7 @@ from tests.settings import (REQRES_API_URL_CHECK, REQRES_API_URL_USERS,
 
 
 @allure.severity(Severity.BLOCKER)
-def test_connection():
+def test_connection() -> None:
     """
     Проверка подключений к API.
 
@@ -26,7 +26,7 @@ def test_connection():
 class StepsConnection:
 
     @allure.step("Проверка статуса подключения.")
-    def step1(self):
+    def step1(self) -> None:
         """Проверка подключения к reqres.in/api/"""
 
         try:
@@ -38,7 +38,7 @@ class StepsConnection:
             raise error
 
     @allure.step("Задержка подключения.")
-    def step2(self):
+    def step2(self) -> None:
         """Проверка подключения c задержкой."""
 
         allure.dynamic.parameter("delay", 3)
