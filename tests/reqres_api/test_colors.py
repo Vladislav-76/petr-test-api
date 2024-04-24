@@ -6,8 +6,8 @@ import requests
 from allure_commons.types import Severity
 
 from tests.conftest import other_color_data
-from tests.reqres_api.utils import is_almost_now
-from tests.settings import REQRES_API_URL_COLORS, TEST_SUCCESS_ATTACHMENTS
+from tests.reqres_api.utils import attach_to_allure_report, is_almost_now
+from tests.settings import REQRES_API_URL_COLORS
 
 
 @allure.severity(Severity.NORMAL)
@@ -32,9 +32,8 @@ class StepsList:
             response = requests.get(url=REQRES_API_URL_COLORS)
             assert response.ok
             assert response.json().get("data", False)
-            if TEST_SUCCESS_ATTACHMENTS:
-                allure.attach("Проверка доступности списка цветов завершена успешно.")
-        except AssertionError as error:
+            attach_to_allure_report("Проверка доступности списка цветов завершена успешно.")
+        except Exception as error:
             logging.error(f"Ошибка доступности списка цветов:\n{error}")
             raise error
 
@@ -50,9 +49,8 @@ class StepsList:
                 response = requests.get(url=REQRES_API_URL_COLORS, params=params)
                 assert response.json().get("page", 0) == params["page"]
                 assert len(response.json().get("data", [])) == params["per_page"]
-                if TEST_SUCCESS_ATTACHMENTS:
-                    allure.attach("Проверка пагинации списка цветов завершена успешно.")
-            except AssertionError as error:
+                attach_to_allure_report("Проверка пагинации списка цветов завершена успешно.")
+            except Exception as error:
                 logging.error(f"Ошибка пагинации списка цветов:\n{error}")
                 raise error
 
@@ -68,9 +66,8 @@ def test_single_color_get(correct_color: dict) -> None:
         response = requests.get(url=f"{REQRES_API_URL_COLORS}{correct_color['id']}")
         assert response.ok
         assert response.json().get("data", None) == color_data
-        if TEST_SUCCESS_ATTACHMENTS:
-            allure.attach("Проверка получения конкретного цвета завершена успешно.")
-    except AssertionError as error:
+        attach_to_allure_report("Проверка получения конкретного цвета завершена успешно.")
+    except Exception as error:
         logging.error(f"Ошибка получения конкретного цвета:\n{error}")
         raise error
 
@@ -89,9 +86,8 @@ def test_color_create() -> None:
         new_data.pop("id", 0)
         assert is_almost_now(new_data.pop("createdAt", None)[:-1])
         assert color_data == new_data
-        if TEST_SUCCESS_ATTACHMENTS:
-            allure.attach("Проверка создания цвета завершена успешно.")
-    except AssertionError as error:
+        attach_to_allure_report("Проверка создания цвета завершена успешно.")
+    except Exception as error:
         logging.error(f"Ошибка создания цвета:\n{error}")
         raise error
 
@@ -107,9 +103,8 @@ def test_user_put(correct_color: dict) -> None:
         new_data = response.json()
         assert is_almost_now(new_data.pop("updatedAt", None)[:-1])
         assert other_color_data == new_data
-        if TEST_SUCCESS_ATTACHMENTS:
-            allure.attach("Проверка PUT изменения цвета завершена успешно.")
-    except AssertionError as error:
+        attach_to_allure_report("Проверка PUT изменения цвета завершена успешно.")
+    except Exception as error:
         logging.error(f"Ошибка PUT изменения цвета:\n{error}")
         raise error
 
@@ -126,9 +121,8 @@ def test_user_patch(correct_color: dict) -> None:
         assert response.ok
         assert is_almost_now(patched_data.pop("updatedAt", None)[:-1])
         assert patched_data == data
-        if TEST_SUCCESS_ATTACHMENTS:
-            allure.attach("Проверка PATCH изменения цвета завершена успешно.")
-    except AssertionError as error:
+        attach_to_allure_report("Проверка PATCH изменения цвета завершена успешно.")
+    except Exception as error:
         logging.error(f"Ошибка PATCH изменения цвета:\n{error}")
         raise error
 
@@ -139,8 +133,7 @@ def test_user_delete(correct_color: dict) -> None:
     try:
         response = requests.delete(url=f"{REQRES_API_URL_COLORS}{correct_color['id']}")
         assert response.status_code == 204
-        if TEST_SUCCESS_ATTACHMENTS:
-            allure.attach("Проверка удаления цвета завершена успешно.")
-    except AssertionError as error:
+        attach_to_allure_report("Проверка удаления цвета завершена успешно.")
+    except Exception as error:
         logging.error(f"Ошибка удаления цвета:\n{error}")
         raise error

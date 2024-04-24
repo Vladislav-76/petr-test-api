@@ -4,8 +4,8 @@ import allure
 import requests
 from allure_commons.types import Severity
 
-from tests.settings import (REQRES_API_URL_CHECK, REQRES_API_URL_USERS,
-                            TEST_SUCCESS_ATTACHMENTS)
+from tests.reqres_api.utils import attach_to_allure_report
+from tests.settings import REQRES_API_URL_CHECK, REQRES_API_URL_USERS
 
 
 @allure.severity(Severity.BLOCKER)
@@ -31,9 +31,8 @@ class StepsConnection:
 
         try:
             assert requests.get(url=REQRES_API_URL_CHECK).status_code == 200
-            if TEST_SUCCESS_ATTACHMENTS:
-                allure.attach("Проверка подключения к reqres.in/api/ завершена успешно.")
-        except AssertionError as error:
+            attach_to_allure_report("Проверка подключения к reqres.in/api/ завершена успешно.")
+        except Exception as error:
             logging.error(f"Ошибка при подключении к {REQRES_API_URL_CHECK}:\n{error}")
             raise error
 
@@ -46,8 +45,7 @@ class StepsConnection:
         try:
             assert response.status_code == 200
             assert len(response.json()["data"]) > 0
-            if TEST_SUCCESS_ATTACHMENTS:
-                allure.attach("Проверка подключения c задержкой завершена успешно.")
-        except AssertionError as error:
+            attach_to_allure_report("Проверка подключения c задержкой завершена успешно.")
+        except Exception as error:
             logging.error(f"Ошибка при подключении c задержкой к {REQRES_API_URL_USERS}:\n{error}")
             raise error

@@ -1,6 +1,7 @@
+from collections.abc import Generator
+
 import pytest
 import requests
-from collections.abc import Generator
 
 from tests.settings import (REQRES_API_URL_COLORS, REQRES_API_URL_REGISTER,
                             REQRES_API_URL_USERS)

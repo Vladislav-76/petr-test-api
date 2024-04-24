@@ -6,9 +6,8 @@ import requests
 from allure_commons.types import Severity
 
 from tests.conftest import correct_user_data, other_user_data
-from tests.reqres_api.utils import is_almost_now
-from tests.settings import (REQRES_API_URL_REGISTER, REQRES_API_URL_USERS,
-                            TEST_SUCCESS_ATTACHMENTS)
+from tests.reqres_api.utils import attach_to_allure_report, is_almost_now
+from tests.settings import REQRES_API_URL_REGISTER, REQRES_API_URL_USERS
 
 
 @allure.severity(Severity.NORMAL)
@@ -33,9 +32,8 @@ class StepsList:
             response = requests.get(url=REQRES_API_URL_USERS)
             assert response.ok
             assert response.json().get("data", False)
-            if TEST_SUCCESS_ATTACHMENTS:
-                allure.attach("Проверка доступности списка пользователей завершена успешно.")
-        except AssertionError as error:
+            attach_to_allure_report("Проверка доступности списка пользователей завершена успешно.")
+        except Exception as error:
             logging.error(f"Ошибка доступности списка пользователей:\n{error}")
             raise error
 
@@ -51,9 +49,8 @@ class StepsList:
                 response = requests.get(url=REQRES_API_URL_USERS, params=params)
                 assert response.json().get("page", 0) == params["page"]
                 assert len(response.json().get("data", [])) == params["per_page"]
-                if TEST_SUCCESS_ATTACHMENTS:
-                    allure.attach("Проверка пагинации списка пользователей завершена успешно.")
-            except AssertionError as error:
+                attach_to_allure_report("Проверка пагинации списка пользователей завершена успешно.")
+            except Exception as error:
                 logging.error(f"Ошибка пагинации списка пользователей:\n{error}")
                 raise error
 
@@ -69,9 +66,8 @@ def test_single_user_get(correct_user: dict) -> None:
         response = requests.get(url=f"{REQRES_API_URL_USERS}{correct_user['id']}")
         assert response.ok
         assert response.json().get("data", None) == user_data
-        if TEST_SUCCESS_ATTACHMENTS:
-            allure.attach("Проверка получения конкретного пользователя завершена успешно.")
-    except AssertionError as error:
+        attach_to_allure_report("Проверка получения конкретного пользователя завершена успешно.")
+    except Exception as error:
         logging.error(f"Ошибка получения конкретного пользователя:\n{error}")
         raise error
 
@@ -103,9 +99,8 @@ class StepsRegister:
             response = requests.post(url=REQRES_API_URL_REGISTER, data=correct_user_data)
             assert response.status_code == 200
             assert response.json().get("id", False) and response.json().get("token", False)
-            if TEST_SUCCESS_ATTACHMENTS:
-                allure.attach("Проверка создания корректного пользователя завершена успешно.")
-        except AssertionError as error:
+            attach_to_allure_report("Проверка создания корректного пользователя завершена успешно.")
+        except Exception as error:
             logging.error(f"Ошибка создания корректного пользователя:\n{error}")
             raise error
 
@@ -117,9 +112,8 @@ class StepsRegister:
             response = requests.post(url=REQRES_API_URL_REGISTER, data=user_password_out)
             assert response.status_code == 400
             assert response.json().get("error", False)
-            if TEST_SUCCESS_ATTACHMENTS:
-                allure.attach("Проверка создания пользователя без пароля завершена успешно.")
-        except AssertionError as error:
+            attach_to_allure_report("Проверка создания пользователя без пароля завершена успешно.")
+        except Exception as error:
             logging.error(f"Ошибка создания пользователя без пароля:\n{error}")
             raise error
 
@@ -131,9 +125,8 @@ class StepsRegister:
             response = requests.post(url=REQRES_API_URL_REGISTER, data=user_email_out)
             assert response.status_code == 400
             assert response.json().get("error", False)
-            if TEST_SUCCESS_ATTACHMENTS:
-                allure.attach("Проверка создания пользователя без почты завершена успешно.")
-        except AssertionError as error:
+            attach_to_allure_report("Проверка создания пользователя без почты завершена успешно.")
+        except Exception as error:
             logging.error(f"Ошибка создания пользователя без почты:\n{error}")
             raise error
 
@@ -149,9 +142,8 @@ def test_user_put(correct_user: dict) -> None:
         user_data = response.json()
         assert is_almost_now(user_data.pop("updatedAt", None)[:-1])
         assert user_data == other_user_data
-        if TEST_SUCCESS_ATTACHMENTS:
-            allure.attach("Проверка PUT изменения пользователя завершена успешно.")
-    except AssertionError as error:
+        attach_to_allure_report("Проверка PUT изменения пользователя завершена успешно.")
+    except Exception as error:
         logging.error(f"Ошибка PUT изменения пользователя:\n{error}")
         raise error
 
@@ -168,9 +160,8 @@ def test_user_patch(correct_user: dict) -> None:
         assert response.ok
         assert is_almost_now(patched_data.pop("updatedAt", None)[:-1])
         assert patched_data == data
-        if TEST_SUCCESS_ATTACHMENTS:
-            allure.attach("Проверка PATCH изменения пользователя завершена успешно.")
-    except AssertionError as error:
+        attach_to_allure_report("Проверка PATCH изменения пользователя завершена успешно.")
+    except Exception as error:
         logging.error(f"Ошибка PATCH изменения пользователя:\n{error}")
         raise error
 
@@ -181,8 +172,7 @@ def test_user_delete(correct_user: dict) -> None:
     try:
         response = requests.delete(url=f"{REQRES_API_URL_USERS}{correct_user['id']}")
         assert response.status_code == 204
-        if TEST_SUCCESS_ATTACHMENTS:
-            allure.attach("Проверка удаления пользователя завершена успешно.")
-    except AssertionError as error:
+        attach_to_allure_report("Проверка удаления пользователя завершена успешно.")
+    except Exception as error:
         logging.error(f"Ошибка удаления пользователя:\n{error}")
         raise error
