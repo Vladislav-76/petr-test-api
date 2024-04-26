@@ -2,11 +2,14 @@ from collections.abc import Generator
 
 import pytest
 import requests
+from requests import Response
 
 from tests.settings import (REQRES_API_URL_COLORS, REQRES_API_URL_REGISTER,
-                            REQRES_API_URL_USERS)
+                            REQRES_API_URL_USERS, Urls, USER_URLS)
+from tests.reqres_api.utils import BaseApiRequest
 
 correct_user_data: dict = {
+    "id": 4,
     "email": "eve.holt@reqres.in",
     "password": "pistol",
     "first_name": "Eve",
@@ -69,3 +72,42 @@ def correct_color() -> Generator[dict, None, None]:
     id = response.json().get("id", None)
     yield {"data": correct_color_data, "id": correct_color_data["id"]}  # Поэтому берем id из нашей даты
     requests.delete(url=f"{REQRES_API_URL_COLORS}{id}")
+
+
+class UsersApi(BaseApiRequest):
+    """Класс API пользователей."""
+
+    def __init__(self, urls: Urls) -> None:
+        self.urls = urls
+
+    def connect(self, **kwargs) -> Response:
+        return self.get(url=self.urls.connect, **kwargs)
+
+    def create(self, body: dict[str, object], **kwargs) -> Response:
+        return self.post(url=self.urls.base, body=body, **kwargs)
+
+    def register(self, body: dict[str, object], **kwargs) -> Response:
+        return self.post(url=self.urls.register, body=body, **kwargs)
+
+    def login(self, body: dict[str, object], **kwargs) -> Response:
+        return self.post(url=self.urls.login, body=body, **kwargs)
+
+    def get_list(self, **kwargs) -> Response:
+        return self.get(url=self.urls.base, **kwargs)
+
+    def get_single(self, id: int, **kwargs) -> Response:
+        return self.get(url=self.urls.base + str(id), **kwargs)
+
+    def update(self, id: int, body: dict[str, object], **kwargs) -> Response:
+        return self.put(url=self.urls.base + str(id), body=body, **kwargs)
+
+    def user_patch(self, id: int, body: dict[str, object], **kwargs) -> Response:
+        return self.patch(url=self.urls.base + str(id), body=body, **kwargs)
+
+    def user_delete(self, id: int, **kwargs) -> Response:
+        return self.delete(url=self.urls.base + str(id), **kwargs)
+
+
+@pytest.fixture
+def user_api():
+    return UsersApi(urls=USER_URLS)
