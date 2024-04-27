@@ -19,8 +19,12 @@ def is_almost_now(iso_time: str) -> bool:
     return iso_time > time_now - timedelta(minutes=5)
 
 
-def types_is_correct(response: dict, model: dict):
+def types_is_correct(response: dict, model: dict) -> str:
     return all(isinstance(value, model[key]) for key, value in response.items())
+
+
+def fields_is_correct(response: dict, input: dict, fields: tuple):
+    return all(response.get(field) == input.get(field) for field in fields)
 
 
 class BaseApiRequest:

@@ -19,9 +19,14 @@ other_user_data: dict = {
 user_data_types: dict = {
     "id": int,
     "email": str,
+    "password": str,
+    "name": str,
     "first_name": str,
     "last_name": str,
     "avatar": str,
+    "createdAt": str,
+    "updatedAt": str,
+    "token": str,
 }
 
 user_list_types: dict = {
@@ -36,9 +41,12 @@ user_list_types: dict = {
 
 Parameters = namedtuple("Parameters", (
     "page_digits", "strings", "large_digits",
+    "user_fields", "user_required_fields",
+    "incorrect_emails", "incorrect_passwords",
 ))
 
 parameters: Parameters = Parameters(
     page_digits=(-1, 0, 2, 4), strings=("frr", "sks"), large_digits=(-10000, 10000),
+    user_fields=("email", "name"), user_required_fields=("email", "password"),
+    incorrect_emails=("qweffjo", "121425", ""), incorrect_passwords=("1", ""),
 )
-

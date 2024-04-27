@@ -75,7 +75,7 @@ other_color_data: dict = {
 #     requests.delete(url=f"{REQRES_API_URL_COLORS}{id}")
 
 
-class UsersApi(BaseApiRequest):
+class ReqresApi(BaseApiRequest):
     """Класс API пользователей."""
 
     def __init__(self, urls: Urls) -> None:
@@ -102,22 +102,22 @@ class UsersApi(BaseApiRequest):
     def update(self, id: int, body: dict[str, object], **kwargs) -> Response:
         return self.put(url=self.urls.base + str(id), body=body, **kwargs)
 
-    def user_patch(self, id: int, body: dict[str, object], **kwargs) -> Response:
+    def inst_patch(self, id: int, body: dict[str, object], **kwargs) -> Response:
         return self.patch(url=self.urls.base + str(id), body=body, **kwargs)
 
-    def user_delete(self, id: int, **kwargs) -> Response:
+    def inst_delete(self, id: int, **kwargs) -> Response:
         return self.delete(url=self.urls.base + str(id), **kwargs)
 
 
 @pytest.fixture
 def user_api():
-    return UsersApi(urls=USER_URLS)
+    return ReqresApi(USER_URLS)
 
 
 @pytest.fixture
 def auth_user_create() -> int:
-    api = UsersApi(USER_URLS)
+    api = ReqresApi(USER_URLS)
     id = api.register(correct_user_data).json()["id"]
     token = api.login(correct_user_data).json()["token"]
     yield id, token
-    api.user_delete(id)
+    api.inst_delete(id)
