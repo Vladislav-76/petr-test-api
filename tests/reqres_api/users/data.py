@@ -35,12 +35,10 @@ user_list_types: dict = {
 
 
 Parameters = namedtuple("Parameters", (
-    "page_digits", "page_strings", "page_large",
-    "user_id_correct", "user_id_incorrect", "user_id_strings",
+    "page_digits", "strings", "large_digits",
 ))
 
 parameters: Parameters = Parameters(
-    page_digits=(-1, 0, 2, 4), page_strings=("frr", ""), page_large=(-10000, 10000),
-    user_id_correct=(2, 9), user_id_incorrect=(-1, 0), user_id_strings=("asd", ),
+    page_digits=(-1, 0, 2, 4), strings=("frr", "sks"), large_digits=(-10000, 10000),
 )
 

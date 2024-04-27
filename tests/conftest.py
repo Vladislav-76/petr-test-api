@@ -1,11 +1,12 @@
-from collections.abc import Generator
+# from collections.abc import Generator
 
 import pytest
-import requests
+# import requests
 from requests import Response
 
-from tests.settings import (REQRES_API_URL_COLORS, REQRES_API_URL_REGISTER,
-                            REQRES_API_URL_USERS, Urls, USER_URLS)
+# from tests.settings import (REQRES_API_URL_COLORS, REQRES_API_URL_REGISTER,
+#                             REQRES_API_URL_USERS, Urls, USER_URLS)
+from tests.settings import Urls, USER_URLS
 from tests.reqres_api.utils import BaseApiRequest
 
 correct_user_data: dict = {
@@ -41,37 +42,37 @@ other_color_data: dict = {
 }
 
 
-@pytest.fixture
-def correct_user() -> Generator[dict, None, None]:
-    """
-    Создание сущности пользователя в БД для использования в тесте с последующим удалением.
+# @pytest.fixture
+# def correct_user() -> Generator[dict, None, None]:
+#     """
+#     Создание сущности пользователя в БД для использования в тесте с последующим удалением.
 
-    Возвращает словарь с данными корректного пользователя.
-    """
+#     Возвращает словарь с данными корректного пользователя.
+#     """
 
-    # На самом деле API не позволяет ничего создать, но возвращает в ответе уже созданного пользователя
+#     # На самом деле API не позволяет ничего создать, но возвращает в ответе уже созданного пользователя
 
-    response = requests.post(url=REQRES_API_URL_REGISTER, data=correct_user_data)
-    id = response.json().get("id", None)
-    yield {"data": correct_user_data, "id": id}
-    requests.delete(url=f"{REQRES_API_URL_USERS}{id}")
+#     response = requests.post(url=REQRES_API_URL_REGISTER, data=correct_user_data)
+#     id = response.json().get("id", None)
+#     yield {"data": correct_user_data, "id": id}
+#     requests.delete(url=f"{REQRES_API_URL_USERS}{id}")
 
 
-@pytest.fixture
-def correct_color() -> Generator[dict, None, None]:
-    """
-    Создание сущности цвета в БД для использования в тесте с последующим удалением.
+# @pytest.fixture
+# def correct_color() -> Generator[dict, None, None]:
+#     """
+#     Создание сущности цвета в БД для использования в тесте с последующим удалением.
 
-    Возвращает словарь с данными корректного цвета.
-    """
+#     Возвращает словарь с данными корректного цвета.
+#     """
 
-    # На самом деле API только делает вид, что создает новую запись
-    # По возвращаемому от API id ничего не получить
+#     # На самом деле API только делает вид, что создает новую запись
+#     # По возвращаемому от API id ничего не получить
 
-    response = requests.post(url=REQRES_API_URL_COLORS, data=correct_color_data)
-    id = response.json().get("id", None)
-    yield {"data": correct_color_data, "id": correct_color_data["id"]}  # Поэтому берем id из нашей даты
-    requests.delete(url=f"{REQRES_API_URL_COLORS}{id}")
+#     response = requests.post(url=REQRES_API_URL_COLORS, data=correct_color_data)
+#     id = response.json().get("id", None)
+#     yield {"data": correct_color_data, "id": correct_color_data["id"]}  # Поэтому берем id из нашей даты
+#     requests.delete(url=f"{REQRES_API_URL_COLORS}{id}")
 
 
 class UsersApi(BaseApiRequest):
@@ -111,3 +112,12 @@ class UsersApi(BaseApiRequest):
 @pytest.fixture
 def user_api():
     return UsersApi(urls=USER_URLS)
+
+
+@pytest.fixture
+def auth_user_create() -> int:
+    api = UsersApi(USER_URLS)
+    id = api.register(correct_user_data).json()["id"]
+    token = api.login(correct_user_data).json()["token"]
+    yield id, token
+    api.user_delete(id)
