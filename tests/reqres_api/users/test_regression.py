@@ -2,16 +2,16 @@ import allure
 from allure_commons.types import Severity
 
 from tests.conftest import ReqresApi
-from tests.reqres_api.general_tests import (
-    StepsCreate, StepsUpdatePatch, StepsGetList, StepsGetSingle, StepsRegisterLogin)
-from tests.reqres_api.users.data import correct_user_data, parameters, user_list_types, user_data_types
+from tests.reqres_api.general_tests import (StepsCreate, StepsDelete, StepsGetList, StepsGetSingle, StepsRegisterLogin,
+                                            StepsUpdatePatch)
+from tests.reqres_api.users.data import correct_user_data, parameters, user_data_types, user_list_types
 
 
 @allure.severity(Severity.NORMAL)
-def test_get_user_list(user_api: ReqresApi) -> None:
+def test_get_user_list(users_api: ReqresApi) -> None:
     """Проверка получения списка пользователей."""
 
-    steps = StepsGetList(user_api)
+    steps = StepsGetList(users_api)
 
     for page in parameters.page_digits:
         steps.get_correct(page)
@@ -24,11 +24,11 @@ def test_get_user_list(user_api: ReqresApi) -> None:
 
 
 @allure.severity(Severity.NORMAL)
-def test_get_single_user(user_api: ReqresApi, auth_user_create: callable) -> None:
+def test_get_single_user(users_api: ReqresApi, auth_user_create: tuple[int, str]) -> None:
     """Проверка получения конкретного пользователя."""
 
     id, token = auth_user_create
-    steps = StepsGetSingle(user_api, id, token)
+    steps = StepsGetSingle(users_api, id, token)
 
     steps.get_correct()
     steps.check_types(user_data_types)
@@ -40,10 +40,10 @@ def test_get_single_user(user_api: ReqresApi, auth_user_create: callable) -> Non
 
 
 @allure.severity(Severity.NORMAL)
-def test_create_user(user_api: ReqresApi) -> None:
+def test_create_user(users_api: ReqresApi) -> None:
     """Проверка создания пользователя."""
 
-    steps = StepsCreate(user_api, correct_user_data)
+    steps = StepsCreate(users_api, correct_user_data)
 
     steps.create_correct(fields=parameters.user_fields)
     steps.check_types(user_data_types)
@@ -53,11 +53,11 @@ def test_create_user(user_api: ReqresApi) -> None:
 
 
 @allure.severity(Severity.NORMAL)
-def test_update_user(user_api: ReqresApi, auth_user_create: callable) -> None:
+def test_update_user(users_api: ReqresApi, auth_user_create: tuple[int, str]) -> None:
     """Проверка изменения пользователя."""
 
     id, token = auth_user_create
-    steps = StepsUpdatePatch(user_api, user_api.update, id, token, correct_user_data)
+    steps = StepsUpdatePatch(users_api, users_api.update, id, token, correct_user_data)
 
     steps.correct_update(fields=parameters.user_fields)
     steps.check_types(user_data_types)
@@ -72,11 +72,11 @@ def test_update_user(user_api: ReqresApi, auth_user_create: callable) -> None:
 
 
 @allure.severity(Severity.NORMAL)
-def test_patch_user(user_api: ReqresApi, auth_user_create: callable) -> None:
+def test_patch_user(users_api: ReqresApi, auth_user_create: tuple[int, str]) -> None:
     """Проверка Patch пользователя."""
 
     id, token = auth_user_create
-    steps = StepsUpdatePatch(user_api, user_api.inst_patch, id, token, correct_user_data)
+    steps = StepsUpdatePatch(users_api, users_api.inst_patch, id, token, correct_user_data)
 
     steps.correct_update(fields=parameters.user_fields)
     steps.check_types(user_data_types)
@@ -91,10 +91,10 @@ def test_patch_user(user_api: ReqresApi, auth_user_create: callable) -> None:
 
 
 @allure.severity(Severity.NORMAL)
-def test_register(user_api: ReqresApi) -> None:
+def test_register(users_api: ReqresApi) -> None:
     """Проверка регистрации."""
 
-    steps = StepsRegisterLogin(user_api, user_api.register, correct_user_data)
+    steps = StepsRegisterLogin(users_api, users_api.register, correct_user_data)
 
     steps.correct_entry()
     steps.check_types(user_data_types)
@@ -107,10 +107,10 @@ def test_register(user_api: ReqresApi) -> None:
 
 
 @allure.severity(Severity.NORMAL)
-def test_login(user_api: ReqresApi) -> None:
+def test_login(users_api: ReqresApi) -> None:
     """Проверка логина."""
 
-    steps = StepsRegisterLogin(user_api, user_api.login, correct_user_data)
+    steps = StepsRegisterLogin(users_api, users_api.login, correct_user_data)
 
     steps.correct_entry()
     steps.check_types(user_data_types)
@@ -120,3 +120,16 @@ def test_login(user_api: ReqresApi) -> None:
         steps.entry_incorrect_email(email)
     for password in parameters.incorrect_passwords:
         steps.entry_incorrect_password(password)
+
+
+@allure.severity(Severity.NORMAL)
+def test_delete_user(users_api: ReqresApi, auth_user_create: tuple[int, str]) -> None:
+    """Проверка удаления пользователя."""
+
+    id, token = auth_user_create
+    steps = StepsDelete(users_api, id, token)
+
+    steps.unauth_delete()
+    steps.get_inst()
+    steps.delete()
+    steps.get_missing_inst()

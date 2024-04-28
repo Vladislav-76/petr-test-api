@@ -1,7 +1,66 @@
+from collections.abc import Callable
+
 import allure
 
 from tests.conftest import ReqresApi
-from tests.reqres_api.utils import is_almost_now, fields_is_correct, types_is_correct
+from tests.reqres_api.utils import fields_is_correct, is_almost_now, types_is_correct
+
+
+class StepsSmoke:
+
+    def __init__(self, api: ReqresApi) -> None:
+        self.api = api
+        self.id = 0
+        self.token = None
+
+    @allure.step("Проверка соединения.")
+    def connect(self) -> None:
+        assert self.api.connect(log="Проверка соединения.").status_code == 200
+
+    @allure.step("Получение списка.")
+    def get_list(self) -> None:
+        response = self.api.get_list(log="Получение списка.")
+        assert response.status_code == 200
+        assert len(response.json()["data"]) > 0
+
+    @allure.step("Создание записи.")
+    def create(self, data: dict) -> None:
+        response = self.api.create(body=data, log="Создание записи.")
+        assert response.status_code == 201
+        self.id = response.json()["id"]
+        assert response.json()["id"]
+
+    @allure.step("Создание пользователя.")
+    def create_user(self, user_data: dict) -> None:
+        response = self.api.register(body=user_data, log="Создание пользователя.")
+        assert response.status_code == 200
+        assert response.json()["id"]
+        self.id = response.json()["id"]
+        assert response.json()["token"]
+
+    @allure.step("Логин пользователя.")
+    def login(self, user_data: dict) -> None:
+        response = self.api.login(body=user_data, log="Логин пользователя.")
+        assert response.status_code == 200
+        self.token = response.json()["token"]
+        assert self.token
+
+    @allure.step("Получение конкретной записи.")
+    def get_single(self, data: dict, field: str) -> None:
+        response = self.api.get_single(id=self.id, token=self.token, log="Получение конкретной записи.")
+        assert response.status_code == 200
+        assert response.json()["data"][field] == data[field]
+
+    @allure.step("Update записи.")
+    def update(self, data: dict, field: str) -> None:
+        response = self.api.update(id=self.id, body=data, token=self.token, log="Update записи.")
+        assert response.status_code == 200
+        assert response.json()[field] == data[field]
+
+    @allure.step("Удаление записи.")
+    def delete(self) -> None:
+        response = self.api.inst_delete(id=self.id, token=self.token, log="Удаление записи.")
+        assert response.status_code == 204
 
 
 class StepsGetList:
@@ -21,13 +80,13 @@ class StepsGetList:
         assert int(response.json()["page"]) == page if page != 0 else 1
 
     @allure.step("Получение списка c большими страницами.")
-    def get_large_pages(self, page) -> None:
+    def get_large_pages(self, page: int) -> None:
         response = self.api.get_list(params={"page": page}, log="Получение списка c большими страницами.")
         assert response.status_code == 200
         assert len(response.json()["data"]) == 0
 
     @allure.step("Получение списка cо страницами - строками.")
-    def get_strings_pages(self, page) -> None:
+    def get_strings_pages(self, page: int) -> None:
         response = self.api.get_list(params={"page": page}, log="Получение списка cо страницами - строками.")
         assert response.status_code == 200
         assert response.json()["page"] == 1
@@ -39,7 +98,7 @@ class StepsGetList:
         assert response.json()["page"] == 1
 
     @allure.step("Проверка типов списка.")
-    def check_types(self, list_types) -> None:
+    def check_types(self, list_types: dict) -> None:
         response = self.api.get_list(log="Проверка типов списка.")
         assert types_is_correct(response.json(), list_types)
 
@@ -118,7 +177,7 @@ class StepsCreate:
 class StepsUpdatePatch:
     """Проверка изменения записи."""
 
-    def __init__(self, api: ReqresApi, method: callable, id: int, token: str, data: dict) -> None:
+    def __init__(self, api: ReqresApi, method: Callable, id: int, token: str = "", data: dict = dict()) -> None:
         self.api = api
         self.method = method
         self.id = id
@@ -168,7 +227,7 @@ class StepsUpdatePatch:
 class StepsRegisterLogin:
     """Проверка регистрации и логина."""
 
-    def __init__(self, api: ReqresApi, method: callable, data: dict) -> None:
+    def __init__(self, api: ReqresApi, method: Callable, data: dict) -> None:
         self.api = api
         self.method = method
         self.data = data
@@ -206,3 +265,32 @@ class StepsRegisterLogin:
         data["password"] = password
         response = self.method(body=data, log="Проверка с некорректным паролем.")
         assert response.status_code == 400
+
+
+class StepsDelete:
+    """Проверка удаления записи."""
+
+    def __init__(self, api: ReqresApi, id: int, token: str = "") -> None:
+        self.api = api
+        self.id = id
+        self.token = token
+
+    @allure.step("Проверка неавторизованного удаления.")
+    def unauth_delete(self):
+        response = self.api.inst_delete(self.id, log="Проверка неавторизованного доступа.")
+        assert response.status_code == 401
+
+    @allure.step("Проверка авторизованного удаления.")
+    def delete(self):
+        response = self.api.inst_delete(self.id, token=self.token, log="Проверка неавторизованного доступа.")
+        assert response.status_code == 204
+
+    @allure.step("Получение записи.")
+    def get_inst(self):
+        response = self.api.get_single(self.id, token=self.token, log="Получение записи.")
+        assert response.status_code == 200
+
+    @allure.step("Получение отсутствующей записи.")
+    def get_missing_inst(self):
+        response = self.api.get_single(self.id, token=self.token, log="Получение отсутствующей записи.")
+        assert response.status_code == 404

@@ -5,25 +5,18 @@ import allure
 import requests
 from requests import Response
 
-# from tests.settings import TEST_SUCCESS_ATTACHMENTS
 
-
-# def attach_to_allure_report(text: str) -> None:
-#     if TEST_SUCCESS_ATTACHMENTS:
-#         allure.attach(text)
-
-
-def is_almost_now(iso_time: str) -> bool:
-    iso_time = datetime.fromisoformat(iso_time)
+def is_almost_now(iso_time_str: str) -> bool:
+    iso_time = datetime.fromisoformat(iso_time_str)
     time_now = datetime.now(tz=iso_time.tzinfo)
     return iso_time > time_now - timedelta(minutes=5)
 
 
-def types_is_correct(response: dict, model: dict) -> str:
+def types_is_correct(response: dict, model: dict) -> bool:
     return all(isinstance(value, model[key]) for key, value in response.items())
 
 
-def fields_is_correct(response: dict, input: dict, fields: tuple):
+def fields_is_correct(response: dict, input: dict, fields: tuple) -> bool:
     return all(response.get(field) == input.get(field) for field in fields)
 
 
@@ -64,9 +57,6 @@ class BaseApiRequest:
             DATA: {response.text}
         """
         )
-
-    # def auth(self, auth_url: str, user: str, password: str, **kwargs) -> Response:
-    #     return self.base_request(method="POST", url=self.base_url + auth_url, auth=(user, password), **kwargs)
 
     def get(self, url: str, **kwargs) -> Response:
         return self.base_request(method="GET", url=self.base_url + url, **kwargs)
